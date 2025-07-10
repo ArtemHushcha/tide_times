@@ -10,7 +10,7 @@ Geocoder.configure(
   https_proxy: nil,           # HTTPS proxy server (user:pass@host:port)
   api_key: nil,               # API key for geocoding service
   cache: nil,                 # cache object (must respond to #[], #[]=, and #del)
-  cache_prefix: 'geocoder:',  # prefix (string) to use for all cache keys
+  cache_prefix: "geocoder:",  # prefix (string) to use for all cache keys
 
   # Exceptions that should not be rescued by default
   always_raise: [
@@ -29,7 +29,7 @@ Geocoder.configure(
 Geocoder::Configuration.instance_eval do
   @timeout = 10
   @lookup = :nominatim
-  @http_headers = { 'User-Agent' => 'TideTimes App (your-email@example.com)' }
+  @http_headers = { "User-Agent" => "TideTimes App (your-email@example.com)" }
   @use_https = true
   @always_raise = [
     Geocoder::OverQueryLimitError,
@@ -45,7 +45,7 @@ if Rails.env.production?
     cache: Redis.new,
     cache_options: {
       expiration: 1.week, # Default expiration time for cached items
-      prefix: 'geocoder:'
+      prefix: "geocoder:"
     }
   )
 end

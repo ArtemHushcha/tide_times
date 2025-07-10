@@ -10,22 +10,22 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Root route
-  root 'home#index'
-  
+  root "home#index"
+
   # Home controller routes
-  get 'home/index'
-  
+  get "home/index"
+
   # Location suggestions endpoint
-  get 'suggestions', to: 'home#suggestions', as: :location_suggestions
-  
+  get "suggestions", to: "home#suggestions", as: :location_suggestions
+
   # For API requests
   namespace :api do
     namespace :v1 do
-      get 'tides', to: 'tides#index'
+      get "tides", to: "tides#index"
     end
   end
-  
+
   # Handle 404s and other exceptions
-  match '/404', to: 'errors#not_found', via: :all
-  match '/500', to: 'errors#internal_server_error', via: :all
+  match "/404", to: "errors#not_found", via: :all
+  match "/500", to: "errors#internal_server_error", via: :all
 end
