@@ -19,6 +19,32 @@ gem "tailwindcss-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# Geocoding and location services
+gem 'geocoder', '~> 1.8'
+
+# HTTP client for API requests
+gem 'httparty', '~> 0.21.0'
+
+# Charting library for Ruby
+gem 'chartkick', '~> 5.0'
+
+group :development, :test do
+  # Debugging tools
+  gem 'pry-rails', '~> 0.3.9'
+  gem 'pry-byebug', '~> 3.10', platform: :mri
+  
+  # Testing framework
+  gem 'rspec-rails', '~> 6.1'
+  
+  # Test data generation
+  gem 'factory_bot_rails', '~> 6.2'
+  gem 'faker', '~> 3.2'
+  
+  # Testing HTTP requests
+  gem 'webmock', '~> 3.19'
+  gem 'vcr', '~> 6.2'
+end
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
@@ -56,4 +82,8 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  
+  # Debugging tools
+  gem 'pry-rails', '~> 0.3.9'
+  gem 'pry-byebug', '~> 3.10', platform: :mri
 end

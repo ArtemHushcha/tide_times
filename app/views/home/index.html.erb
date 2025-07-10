@@ -1,0 +1,131 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
+        Tide Times
+      </h1>
+      <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+        Check tide times and heights for any coastal location
+      </p>
+    </div>
+
+    <div class="mt-10 sm:mt-12">
+      <%= form_with url: root_path, method: :get, class: "max-w-2xl mx-auto", data: { controller: "location-search" } do |f| %>
+        <div class="relative">
+          <div class="flex">
+            <%= f.text_field :location, 
+                  value: @location&.dig(:name),
+                  placeholder: "Enter a location or coordinates (e.g., 'San Francisco' or '37.7749,-122.4194')",
+                  class: "flex-1 min-w-0 block w-full px-5 py-3 text-base rounded-l-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm",
+                  data: { 
+                    location_search_target: "input",
+                    action: "input->location-search#handleInput focus->location-search#handleFocus blur->location-search#handleBlur"
+                  } %>
+            
+            <button type="submit" 
+                    class="px-6 py-3 border border-transparent text-base font-medium rounded-r-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Get Tides
+            </button>
+          </div>
+          
+          <div class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto max-h-60 focus:outline-none sm:text-sm hidden"
+               data-location-search-target="suggestions">
+            <!-- Suggestions will be inserted here by JavaScript -->
+          </div>
+          
+          <div class="absolute inset-y-0 right-32 flex items-center">
+            <button type="button" 
+                    class="p-2 text-gray-400 hover:text-gray-500 focus:outline-none"
+                    data-action="click->location-search#getCurrentLocation"
+                    title="Use current location">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @tide_data.present? %>
+      <div class="mt-16">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-bold text-gray-900">Tide Chart for <%= @location[:name] %></h2>
+          <p class="mt-1 text-sm text-gray-500">
+            <%= Time.current.strftime('%A, %B %-d, %Y') %>
+          </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
+          <div class="h-96" data-controller="tide-chart" data-tide-chart-tide-data-value="<%= @tide_data.to_json %>">
+            <canvas data-tide-chart-target="canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+          <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Upcoming Tides</h3>
+          </div>
+          <div class="divide-y divide-gray-200">
+            <% @tide_data.select { |t| t[:isHighTide] || t[:isLowTide] }.each do |tide| %>
+              <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+                <div class="flex items-center">
+                  <% if tide[:isHighTide] %>
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+                      </svg>
+                    </div>
+                    <div class="ml-4">
+                      <p class="text-sm font-medium text-gray-900">High Tide</p>
+                      <p class="text-sm text-gray-500"><%= tide[:time] %></p>
+                    </div>
+                  <% else %>
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center">
+                      <svg class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <div class="ml-4">
+                      <p class="text-sm font-medium text-gray-900">Low Tide</p>
+                      <p class="text-sm text-gray-500"><%= tide[:time] %></p>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-gray-900"><%= tide[:y] %> m</p>
+                  <p class="text-sm text-gray-500"><%= tide[:date] %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% elsif flash[:alert].present? %>
+      <div class="mt-8 bg-red-50 border-l-4 border-red-400 p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-red-700"><%= flash[:alert] %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <div class="mt-16 border-t border-gray-200 pt-8 text-center">
+    <p class="text-base text-gray-500">
+      &copy; <%= Time.current.year %> Tide Times. Powered by WorldTides API.
+    </p>
+  </div>
+</div>
+
+<!-- Include the Stimulus controllers -->
+<%= javascript_importmap_tags %>
+
+<!-- Include the flash messages partial -->
+<%= render 'shared/flash' %>
