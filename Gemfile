@@ -23,7 +23,7 @@ gem "jbuilder"
 gem "geocoder", "~> 1.8"
 
 # HTTP client for API requests
-gem "httparty", "~> 0.21.0"
+gem "httparty", "~> 0.23.1"
 
 # Charting library for Ruby
 gem "chartkick", "~> 5.0"
