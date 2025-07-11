@@ -125,7 +125,8 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashdiff (1.2.0)
-    httparty (0.21.0)
+    httparty (0.23.1)
+      csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
@@ -417,7 +418,7 @@ DEPENDENCIES
   factory_bot_rails (~> 6.2)
   faker (~> 3.2)
   geocoder (~> 1.8)
-  httparty (~> 0.21.0)
+  httparty (~> 0.23.1)
   importmap-rails
   jbuilder
   kamal
